@@ -1,6 +1,8 @@
-import React, { Component } from 'react'
+import React from 'react'
 import glam from 'glamorous'
 import { Link } from 'react-router-dom'
+import getOr from 'lodash/fp/getOr'
+import map from 'lodash/fp/map'
 
 import BookShelf from './BookShelf'
 import Add from '../icons/Add'
@@ -12,13 +14,13 @@ const ListBooksTitle = glam.div({
   '& h1': {
     fontWeight: 400,
     margin: 0,
-    color: 'white',
-  },
+    color: 'white'
+  }
 })
 
 const ListBooksContent = glam.div({
   padding: '0 0 80px',
-  flex: 1,
+  flex: 1
 })
 
 const OpenSearch = glam(Link)({
@@ -33,50 +35,39 @@ const OpenSearch = glam(Link)({
   boxShadow: '0 3px 6px rgba(0,0,0,0.16), 0 3px 6px rgba(0,0,0,0.23)',
   display: 'flex',
   alignItems: 'center',
-  justifyContent: 'center',
+  justifyContent: 'center'
 })
 
-class BookApp extends Component {
-  render() {
-    const {
-      shelves: {
-        currentlyReading = [],
-        read = [],
-        wantToRead = [],
-      },
-      updateBooks,
-    } = this.props
+const shelfLabelMap = [
+  { id: 'currentlyReading', label: 'Currently Reading' },
+  { id: 'wantToRead', label: 'Want to Read' },
+  { id: 'read', label: 'Read' }
+]
 
-    return (
-      <div className="list-books">
-        <ListBooksTitle>
-          <h1>My Reads</h1>
-        </ListBooksTitle>
-        <ListBooksContent>
-          <div>
+const BookApp = ({ shelves, updateBookShelf }) => (
+  <div className="list-books">
+    <ListBooksTitle>
+      <h1>My Reads</h1>
+    </ListBooksTitle>
+    <ListBooksContent>
+      <div>
+        {/* Since Objects are unordered, and I want to keep */}
+        {map(
+          ({ id, label }) => (
             <BookShelf
-              title="Currently Reading"
-              books={currentlyReading}
-              updateBooks={updateBooks}
+              title={label}
+              books={getOr([], id, shelves)}
+              updateBookShelf={updateBookShelf}
             />
-            <BookShelf
-              title="Want To Read"
-              books={wantToRead}
-              updateBooks={updateBooks}
-            />
-            <BookShelf
-              title="Read"
-              books={read}
-              updateBooks={updateBooks}
-            />
-          </div>
-        </ListBooksContent>
-        <OpenSearch to="/search">
-          <Add css={{ width: 28, height: 28 }} />
-        </OpenSearch>
+          ),
+          shelfLabelMap
+        )}
       </div>
-    )
-  }
-}
+    </ListBooksContent>
+    <OpenSearch to="/search">
+      <Add css={{ width: 28, height: 28 }} />
+    </OpenSearch>
+  </div>
+)
 
 export default BookApp

@@ -1,4 +1,3 @@
-import React from 'react'
 import glam from 'glamorous'
 
 const BooksGrid = glam.ol({
@@ -7,7 +6,7 @@ const BooksGrid = glam.ol({
   margin: 0,
   display: 'flex',
   justifyContent: 'center',
-  flexWrap: 'wrap',
+  flexWrap: 'wrap'
 })
 
 export default BooksGrid
